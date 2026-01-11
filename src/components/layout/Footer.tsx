@@ -103,9 +103,23 @@ export function Footer() {
       {/* Copyright */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 lg:px-8 py-6">
-          <p className="text-center text-ivory/50 text-sm">
-            © 2026 • All Rights Reserved
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-ivory/50 text-sm">
+            <p>© 2026 • All Rights Reserved</p>
+            <span className="hidden sm:inline text-ivory/30">|</span>
+            <p className="flex items-center gap-1.5">
+              Designed with{" "}
+              <span className="inline-block animate-pulse text-gold">♥</span>{" "}
+              by{" "}
+              <a
+                href="https://bunisystems.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold hover:text-gold/80 transition-colors font-medium"
+              >
+                Bunisystems
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
