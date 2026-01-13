@@ -1,27 +1,51 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, Phone, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const navItems = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Air Charters", href: "/air-charters" },
-  { label: "Safaris", href: "/safari-itineraries" },
-  { label: "Safari Itineraries", href: "/safari-itineraries" },
-  { label: "Camps & Lodges", href: "/camps-lodges" },
+  {
+    label: "Safaris",
+    href: "/safari-itineraries",
+    children: [
+      { label: "Safari Itineraries", href: "/safari-itineraries" },
+      { label: "Camps & Lodges", href: "/camps-lodges" },
+    ],
+  },
   { label: "Concierge Services", href: "/about" },
   { label: "Contacts", href: "/about#contact" },
 ];
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [safarisOpen, setSafarisOpen] = useState(false);
   const location = useLocation();
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
     return location.pathname.startsWith(href);
+  };
+
+  const isSafariActive = () => {
+    return (
+      location.pathname.startsWith("/safari-itineraries") ||
+      location.pathname.startsWith("/camps-lodges")
+    );
   };
 
   return (
@@ -39,19 +63,53 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-            {navItems.slice(0, 6).map((item) => (
-              <Link
-                key={item.href + item.label}
-                to={item.href}
-                className={`text-sm font-medium tracking-wide transition-colors link-underline ${
-                  isActive(item.href)
-                    ? "text-gold"
-                    : "text-ivory/80 hover:text-ivory"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.children ? (
+                <DropdownMenu key={item.label}>
+                  <DropdownMenuTrigger
+                    className={`flex items-center gap-1 text-sm font-medium tracking-wide transition-colors outline-none ${
+                      isSafariActive()
+                        ? "text-gold"
+                        : "text-ivory/80 hover:text-ivory"
+                    }`}
+                  >
+                    {item.label}
+                    <ChevronDown className="h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="bg-charcoal border-white/10 min-w-[180px]"
+                  >
+                    {item.children.map((child) => (
+                      <DropdownMenuItem key={child.href} asChild>
+                        <Link
+                          to={child.href}
+                          className={`w-full cursor-pointer ${
+                            isActive(child.href)
+                              ? "text-gold"
+                              : "text-ivory/80 hover:text-ivory"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link
+                  key={item.href + item.label}
+                  to={item.href}
+                  className={`text-sm font-medium tracking-wide transition-colors link-underline ${
+                    isActive(item.href)
+                      ? "text-gold"
+                      : "text-ivory/80 hover:text-ivory"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Right side - CTA and Phone */}
@@ -93,21 +151,60 @@ export function Header() {
                     />
                   </div>
 
-                  <nav className="flex flex-col gap-4">
-                    {navItems.map((item) => (
-                      <Link
-                        key={item.href + item.label}
-                        to={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className={`text-base font-medium py-2 border-b border-white/5 transition-colors ${
-                          isActive(item.href)
-                            ? "text-gold"
-                            : "text-ivory/80 hover:text-ivory"
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                  <nav className="flex flex-col gap-2">
+                    {navItems.map((item) =>
+                      item.children ? (
+                        <Collapsible
+                          key={item.label}
+                          open={safarisOpen}
+                          onOpenChange={setSafarisOpen}
+                        >
+                          <CollapsibleTrigger
+                            className={`flex items-center justify-between w-full text-base font-medium py-2 border-b border-white/5 transition-colors ${
+                              isSafariActive()
+                                ? "text-gold"
+                                : "text-ivory/80 hover:text-ivory"
+                            }`}
+                          >
+                            {item.label}
+                            <ChevronDown
+                              className={`h-4 w-4 transition-transform ${
+                                safarisOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="pl-4 space-y-2 pt-2">
+                            {item.children.map((child) => (
+                              <Link
+                                key={child.href}
+                                to={child.href}
+                                onClick={() => setIsOpen(false)}
+                                className={`block text-sm py-2 transition-colors ${
+                                  isActive(child.href)
+                                    ? "text-gold"
+                                    : "text-ivory/60 hover:text-ivory"
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ) : (
+                        <Link
+                          key={item.href + item.label}
+                          to={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`text-base font-medium py-2 border-b border-white/5 transition-colors ${
+                            isActive(item.href)
+                              ? "text-gold"
+                              : "text-ivory/80 hover:text-ivory"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      )
+                    )}
                   </nav>
 
                   <div className="mt-auto pt-8 space-y-4">
