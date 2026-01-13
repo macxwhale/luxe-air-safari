@@ -26,7 +26,7 @@ const services = [
       "Luxury hospitality and personalized travel concierge services.",
     image: "/images/villa-rosa.jpg",
     imageAlt: "Luxury hotel interior",
-    href: "/about",
+    href: "/concierge-services",
     icon: Gem,
   },
 ];
