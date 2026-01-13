@@ -27,7 +27,7 @@ const navItems = [
       { label: "Camps & Lodges", href: "/camps-lodges" },
     ],
   },
-  { label: "Concierge Services", href: "/about" },
+  { label: "Concierge Services", href: "/concierge-services" },
   { label: "Contacts", href: "/about#contact" },
 ];
 
